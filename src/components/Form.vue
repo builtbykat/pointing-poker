@@ -3,10 +3,12 @@
     <h1>Pointing Poker</h1>
     <h2>Room: {{ $route.params.session }}</h2>
     <form>
-      <input type="hidden" name="session" :value="$route.params.session">
-      <input type="hidden" name="name" :value="this.name">
+      <input type="text" name="session" v-model="selected.session">
+      <input type="text" name="name" v-model="selected.name">
       <ul>
-        <li v-for="pt in pointsAllowed" :key="pt.id"><input type="radio" name="point">{{ pt }}</li>
+        <li v-for="pt in pointsAllowed" :key="pt.id">
+          <input type="radio" name="point" v-model="selected.point" :value="pt" @change="addPoints">{{ pt }}
+        </li>
       </ul>
     </form>
   </div>
@@ -20,8 +22,22 @@
 </template>
 
 <script>
+import Firebase from 'firebase'
+let config = {
+  apiKey: process.env.VUE_APP_DB_API_KEY,
+  authDomain: process.env.VUE_APP_DB_AUTH_DOMAIN,
+  databaseURL: 'https://vuejs-28038.firebaseio.com',
+  storageBucket: process.env.VUE_APP_DB_BUCKET,
+  messagingSenderId: process.env.VUE_APP_DB_SENDER_ID
+}
+let app = Firebase.initializeApp(config)
+let db = app.database()
+let selectedPoints = db.ref('poker')
 export default {
   name: 'app',
+  firebase: {
+    points: selectedPoints
+  },
   data () {
     return {
       pointsAllowed: [
@@ -32,7 +48,12 @@ export default {
         16
       ],
       name: '',
-      submit: false
+      submit: false,
+      selected: {
+        session: this.$route.params.session,
+        name: localStorage.name,
+        point: ''
+      }
     }
   },
   mounted () {
@@ -44,6 +65,11 @@ export default {
   watch: {
     name (newName) {
       localStorage.name = newName
+    }
+  },
+  methods: {
+    addPoints: function () {
+      selectedPoints.push(this.selected)
     }
   }
 }
