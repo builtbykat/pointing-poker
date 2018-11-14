@@ -11,6 +11,13 @@
         </li>
       </ul>
     </form>
+    <p>Selected Points: {{ selected.point }}</p>
+    <div>
+      <h2>Players:</h2>
+      <ul>
+        <li v-for="name in uniqPlayers" :key="name.id">{{ name }}</li>
+      </ul>
+    </div>
   </div>
   <div class="name" v-else>
     <form>
@@ -22,6 +29,7 @@
 </template>
 
 <script>
+import uniq from 'lodash/uniq'
 import Firebase from 'firebase'
 let config = {
   apiKey: process.env.VUE_APP_DB_API_KEY,
@@ -36,7 +44,7 @@ let selectedPoints = db.ref('poker')
 export default {
   name: 'app',
   firebase: {
-    points: selectedPoints
+    poker: selectedPoints
   },
   data () {
     return {
@@ -71,10 +79,18 @@ export default {
     addPoints: function () {
       selectedPoints.push(this.selected)
     }
+  },
+  computed: {
+    uniqPlayers () {
+      return uniq(this.poker.map(p => p.name))
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  li {
+    list-style: none;
+  }
 </style>
