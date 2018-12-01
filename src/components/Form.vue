@@ -1,5 +1,5 @@
 <template>
-  <div class="poker" v-if="this.submit && this.name">
+  <div class="poker" v-if="this.$route.params.session === this.session">
     <h1>Pointing Poker</h1>
     <h2>Room: {{ $route.params.session }}</h2>
     <form>
@@ -47,6 +47,7 @@ let config = {
 let app = Firebase.initializeApp(config)
 let db = app.database()
 let selectedPoints = db.ref('poker')
+let players = []
 export default {
   name: 'app',
   firebase: {
@@ -62,6 +63,7 @@ export default {
         16
       ],
       index: this.$route.params.session + '_' + localStorage.name,
+      session: localStorage.session,
       submit: false,
       selected: {
         session: this.$route.params.session,
@@ -79,6 +81,7 @@ export default {
   watch: {
     name (newName) {
       localStorage.name = newName
+      localStorage.session = this.$route.params.session
     }
   },
   methods: {
@@ -89,6 +92,7 @@ export default {
         points: this.selected.points
       })
       this.submit = true
+      localStorage.session = this.$route.params.session
     },
     updatePoints: function () {
       selectedPoints.child(this.index).update({
@@ -98,8 +102,8 @@ export default {
       })
     },
     clearPoints: function () {
-      this.poker.forEach(function (player) {
-        selectedPoints.child(player['.key']).update({
+      players.forEach(function (player) {
+        selectedPoints.child(player.key).update({
           points: ''
         })
       })
@@ -107,12 +111,11 @@ export default {
   },
   computed: {
     uniqPlayers () {
-      let players = []
-      let map = new Map()
+      players = []
       for (let item of this.poker) {
-        if (!map.has(item.name)) {
-          map.set(item.name, true)
+        if (item.session === this.selected.session) {
           players.push({
+            key: item['.key'],
             name: item.name,
             points: item.points
           })
