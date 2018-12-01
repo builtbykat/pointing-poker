@@ -7,7 +7,8 @@
       <input type="text" name="name" v-model="selected.name">
       <ul>
         <li v-for="pt in pointsAllowed" :key="pt.id">
-          <input type="radio" name="point" v-model="selected.point" :value="pt" @change="addPoints">{{ pt }}
+          <input :id="pt" type="radio" name="point" v-model="selected.points" :value="pt" @change="updatePoints">
+          <label :for="pt">{{ pt }}</label>
         </li>
       </ul>
     </form>
@@ -22,8 +23,8 @@
   <div class="name" v-else>
     <form>
       <label>Enter Name:</label>
-      <input v-model="name">
-      <button v-on:click="this.submit=true">Save</button>
+      <input v-model="selected.name">
+      <button @click="insertPlayer">Save</button>
     </form>
   </div>
 </template>
@@ -55,18 +56,18 @@ export default {
         8,
         16
       ],
-      name: '',
+      index: this.$route.params.session + '_' + localStorage.name,
       submit: false,
       selected: {
         session: this.$route.params.session,
         name: localStorage.name,
-        point: ''
+        points: ''
       }
     }
   },
   mounted () {
     if (localStorage.name) {
-      this.name = localStorage.name
+      this.selected.name = localStorage.name
       this.submit = true
     }
   },
@@ -76,13 +77,28 @@ export default {
     }
   },
   methods: {
-    addPoints: function () {
-      selectedPoints.push(this.selected)
+    insertPlayer: function () {
+      let ref = selectedPoints.child(this.$route.params.session + '_' + localStorage.name).set({
+        session: this.selected.session,
+        name: this.selected.name,
+        points: this.selected.points,
+      })
+      this.submit = true
+    },
+    updatePoints: function () {
+      selectedPoints.child(this.index).update({
+        session: this.selected.session,
+        name: this.selected.name,
+        points: this.selected.points,
+      })
     }
   },
   computed: {
     uniqPlayers () {
-      return uniq(this.poker.map(p => p.name))
+      return uniq(this.poker.map(p => [p.name, p.points]))
+    },
+    name () {
+      return this.selected.name
     }
   }
 }
