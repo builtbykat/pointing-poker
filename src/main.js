@@ -4,11 +4,13 @@ import Vue from 'vue'
 import App from './App'
 import VueRouter from 'vue-router'
 import VueFire from 'vuefire'
+import BootstrapVue from 'bootstrap-vue'
 
 import Form from './components/Form'
 
 Vue.use(VueRouter)
 Vue.use(VueFire)
+Vue.use(BootstrapVue)
 
 const routes = [
   { path: '/:session', component: Form }
