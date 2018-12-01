@@ -14,6 +14,9 @@
     </form>
     <p>Selected Points: {{ selected.point }}</p>
     <div>
+      <button @click="clearPoints">Clear Points</button>
+    </div>
+    <div>
       <h2>Players:</h2>
       <ul>
         <li v-for="name in uniqPlayers" :key="name.id">{{ name }}</li>
@@ -90,6 +93,13 @@ export default {
         session: this.selected.session,
         name: this.selected.name,
         points: this.selected.points
+      })
+    },
+    clearPoints: function () {
+      this.poker.forEach(function (player) {
+        selectedPoints.child(player['.key']).update({
+          points: ''
+        })
       })
     }
   },
