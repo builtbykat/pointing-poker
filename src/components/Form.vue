@@ -78,10 +78,10 @@ export default {
   },
   methods: {
     insertPlayer: function () {
-      let ref = selectedPoints.child(this.$route.params.session + '_' + localStorage.name).set({
+      selectedPoints.child(this.$route.params.session + '_' + localStorage.name).set({
         session: this.selected.session,
         name: this.selected.name,
-        points: this.selected.points,
+        points: this.selected.points
       })
       this.submit = true
     },
@@ -89,7 +89,7 @@ export default {
       selectedPoints.child(this.index).update({
         session: this.selected.session,
         name: this.selected.name,
-        points: this.selected.points,
+        points: this.selected.points
       })
     }
   },
