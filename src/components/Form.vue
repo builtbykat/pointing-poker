@@ -1,22 +1,28 @@
 <template>
-  <div class="poker" v-if="this.submit && this.name">
+  <div class="poker" v-if="this.$route.params.session === this.session">
     <h1>Pointing Poker</h1>
     <h2>Room: {{ $route.params.session }}</h2>
     <form>
-      <input type="text" name="session" v-model="selected.session">
-      <input type="text" name="name" v-model="selected.name">
+      <input type="hidden" name="session" v-model="selected.session">
+      <input type="hidden" name="name" v-model="selected.name">
       <ul>
         <li v-for="pt in pointsAllowed" :key="pt.id">
-          <input :id="pt" type="radio" name="point" v-model="selected.points" :value="pt" @change="updatePoints">
-          <label :for="pt">{{ pt }}</label>
+          <input :id="pt" type="radio" name="point" v-model="selected.points" :value="pt">
+          <label :for="pt" class="btn btn-secondary" @click="updatePoints(pt)">{{ pt }}</label>
         </li>
       </ul>
     </form>
-    <p>Selected Points: {{ selected.point }}</p>
+    <p>Selected Points: {{ selected.points }}</p>
+    <div>
+      <button @click="clearPoints">Clear Points</button>
+    </div>
     <div>
       <h2>Players:</h2>
       <ul>
-        <li v-for="name in uniqPlayers" :key="name.id">{{ name }}</li>
+        <li v-for="player in uniqPlayers" :key="player['.key']">
+          {{ player.name }}
+          <span class="selected-point" v-if="allPointsIn">{{ player.points }}</span>
+        </li>
       </ul>
     </div>
   </div>
@@ -30,7 +36,6 @@
 </template>
 
 <script>
-import uniq from 'lodash/uniq'
 import Firebase from 'firebase'
 let config = {
   apiKey: process.env.VUE_APP_DB_API_KEY,
@@ -42,6 +47,7 @@ let config = {
 let app = Firebase.initializeApp(config)
 let db = app.database()
 let selectedPoints = db.ref('poker')
+let players = []
 export default {
   name: 'app',
   firebase: {
@@ -57,6 +63,7 @@ export default {
         16
       ],
       index: this.$route.params.session + '_' + localStorage.name,
+      session: localStorage.session,
       submit: false,
       selected: {
         session: this.$route.params.session,
@@ -74,6 +81,7 @@ export default {
   watch: {
     name (newName) {
       localStorage.name = newName
+      localStorage.session = this.$route.params.session
     }
   },
   methods: {
@@ -84,21 +92,49 @@ export default {
         points: this.selected.points
       })
       this.submit = true
+      localStorage.session = this.$route.params.session
     },
-    updatePoints: function () {
+    updatePoints: function (pt) {
       selectedPoints.child(this.index).update({
         session: this.selected.session,
         name: this.selected.name,
-        points: this.selected.points
+        points: pt
+      })
+    },
+    clearPoints: function () {
+      players.forEach(function (player) {
+        selectedPoints.child(player.key).update({
+          points: ''
+        })
       })
     }
   },
   computed: {
     uniqPlayers () {
-      return uniq(this.poker.map(p => [p.name, p.points]))
+      players = []
+      for (let item of this.poker) {
+        if (item.session === this.selected.session) {
+          players.push({
+            key: item['.key'],
+            name: item.name,
+            points: item.points
+          })
+        }
+      }
+      return players
     },
     name () {
       return this.selected.name
+    },
+    allPointsIn () {
+      let points = []
+      this.uniqPlayers.forEach(function (player) {
+        points.push(player.points)
+      })
+      let filtered = points.filter(function (point) {
+        return point !== ''
+      })
+      return filtered.length === this.uniqPlayers.length
     }
   }
 }
@@ -108,5 +144,8 @@ export default {
 <style scoped>
   li {
     list-style: none;
+  }
+  input[type=radio] {
+    display: none;
   }
 </style>
