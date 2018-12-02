@@ -21,6 +21,11 @@ export default {
       randomRoom: '/' + (Math.floor(Math.random() * 90000) + 100000)
     }
   },
+  mounted () {
+    if (localStorage.session) {
+      localStorage.removeItem('session')
+    }
+  },
   methods: {
     joinRoom: function () {
       let room = Number(document.getElementById('room').value)
