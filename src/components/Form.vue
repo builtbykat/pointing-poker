@@ -1,5 +1,5 @@
 <template>
-  <div class="poker" v-if="this.$route.params.session === this.session">
+  <div class="poker content" v-if="this.$route.params.session === this.session">
     <h1>Pointing Poker</h1>
     <h2>Room: {{ $route.params.session }}</h2>
     <form>
@@ -12,11 +12,11 @@
         </li>
       </ul>
     </form>
-    <p>Selected Points: {{ selected.points }}</p>
-    <div>
+    <p class="userPts">Selected Points: {{ selected.points }}</p>
+    <div class="actions">
       <button @click="clearPoints">Clear Points</button>
     </div>
-    <div>
+    <div class="results">
       <h2>Players:</h2>
       <ul>
         <li v-for="player in uniqPlayers" :key="player['.key']">
@@ -26,7 +26,7 @@
       </ul>
     </div>
   </div>
-  <div class="name" v-else>
+  <div class="name content" v-else>
     <form>
       <label>Enter Name:</label>
       <input v-model="selected.name">
@@ -142,10 +142,25 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .actions {
+    margin-bottom: 20px;
+  }
+  .content {
+    padding: 20px;
+    max-width: 320px;
+  }
+  h1, h2 {
+    margin-bottom: 20px;
+  }
   li {
+    display: inline-block;
     list-style: none;
+    margin-right: 10px;
   }
   input[type=radio] {
     display: none;
+  }
+  .userPts {
+    margin-bottom: 60px;
   }
 </style>
