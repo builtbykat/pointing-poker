@@ -1,5 +1,5 @@
 <template>
-  <div class="poker" v-if="this.$route.params.session === this.session">
+  <div class="poker content" v-if="canUserJoinRoom">
     <h1>Pointing Poker</h1>
     <h2>Room: {{ $route.params.session }}</h2>
     <form>
@@ -12,21 +12,32 @@
         </li>
       </ul>
     </form>
-    <p>Selected Points: {{ selected.points }}</p>
-    <div>
+    <p class="userPts">Selected Points: {{ selected.points }}</p>
+    <hr>
+    <div class="actions">
       <button @click="clearPoints">Clear Points</button>
     </div>
-    <div>
-      <h2>Players:</h2>
-      <ul>
-        <li v-for="player in uniqPlayers" :key="player['.key']">
-          {{ player.name }}
-          <span class="selected-point" v-if="allPointsIn">{{ player.points }}</span>
-        </li>
-      </ul>
+    <div class="results">
+      <h3>Players:</h3>
+      <table>
+        <tr v-for="player in uniqPlayers" :key="player['.key']">
+          <td>
+            {{ player.name }}
+          </td>
+          <td class="selected-point" :class="[allPointsIn ? showClass : hideClass]">
+            {{ player.points }}
+          </td>
+        </tr>
+      </table>
+      <div class="stats">
+        <p>
+          Max:
+          <span id="winner" v-if="allPointsIn">{{ winningPoint }}</span>
+        </p>
+      </div>
     </div>
   </div>
-  <div class="name" v-else>
+  <div class="name content" v-else>
     <form>
       <label>Enter Name:</label>
       <input v-model="selected.name">
@@ -55,16 +66,19 @@ export default {
   },
   data () {
     return {
+      index: localStorage.session + '_' + localStorage.name,
+      hideClass: 'hide-points',
+      showClass: 'show-points',
+      session: localStorage.session,
+      submit: false,
       pointsAllowed: [
         1,
         2,
         4,
         8,
-        16
+        16,
+        '?'
       ],
-      index: this.$route.params.session + '_' + localStorage.name,
-      session: localStorage.session,
-      submit: false,
       selected: {
         session: this.$route.params.session,
         name: localStorage.name,
@@ -82,11 +96,29 @@ export default {
     name (newName) {
       localStorage.name = newName
       localStorage.session = this.$route.params.session
+      this.index = localStorage.session + '_' + localStorage.name
     }
   },
   methods: {
+    clearPoints: function () {
+      players.forEach(function (player) {
+        selectedPoints.child(player.key).update({
+          points: ''
+        })
+      })
+    },
+    computePoints: function () {
+      let points = []
+      this.uniqPlayers.forEach(function (player) {
+        points.push(player.points)
+      })
+      let filtered = points.filter(function (point) {
+        return point !== ''
+      })
+      return filtered
+    },
     insertPlayer: function () {
-      selectedPoints.child(this.$route.params.session + '_' + localStorage.name).set({
+      selectedPoints.child(this.index).set({
         session: this.selected.session,
         name: this.selected.name,
         points: this.selected.points
@@ -100,20 +132,26 @@ export default {
         name: this.selected.name,
         points: pt
       })
-    },
-    clearPoints: function () {
-      players.forEach(function (player) {
-        selectedPoints.child(player.key).update({
-          points: ''
-        })
-      })
     }
   },
   computed: {
+    allPointsIn () {
+      let points = this.computePoints()
+      if (points.length === this.uniqPlayers.length) {
+        return true
+      } else {
+      }
+    },
+    canUserJoinRoom () {
+      return this.$route.params.session === localStorage.session && localStorage.name && this.submit
+    },
+    name () {
+      return this.selected.name
+    },
     uniqPlayers () {
       players = []
       for (let item of this.poker) {
-        if (item.session === this.selected.session) {
+        if (item.session === this.selected.session && !item['.key'].includes('undefined')) {
           players.push({
             key: item['.key'],
             name: item.name,
@@ -123,18 +161,10 @@ export default {
       }
       return players
     },
-    name () {
-      return this.selected.name
-    },
-    allPointsIn () {
-      let points = []
-      this.uniqPlayers.forEach(function (player) {
-        points.push(player.points)
-      })
-      let filtered = points.filter(function (point) {
-        return point !== ''
-      })
-      return filtered.length === this.uniqPlayers.length
+    winningPoint () {
+      let points = this.computePoints()
+      let filtered = points.filter(el => el !== '?')
+      return Math.max.apply(null, filtered)
     }
   }
 }
@@ -142,10 +172,44 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .actions {
+    margin-bottom: 20px;
+  }
+  .content {
+    padding: 20px;
+    max-width: 320px;
+  }
+  h1, h2, h3, hr, .userPts {
+    margin-bottom: 20px;
+  }
   li {
+    display: inline-block;
     list-style: none;
+    margin-right: 10px;
   }
   input[type=radio] {
     display: none;
+  }
+  .selected-point {
+    background-color: #000;
+    color: #000;
+    width: 20%;
+  }
+  .selected-point.show-points {
+    background-color: #FFF;
+  }
+  .selected-point.hide-points {
+    background-color: #000;
+  }
+  .stats {
+    border: 1px solid #000;
+    margin: 20px 0;
+    padding: 10px;
+  }
+  table {
+    width: 100%;
+  }
+  ul {
+    padding-left: 0;
   }
 </style>
