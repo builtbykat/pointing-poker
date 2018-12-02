@@ -7,8 +7,8 @@
       <input type="hidden" name="name" v-model="selected.name">
       <ul>
         <li v-for="pt in pointsAllowed" :key="pt.id">
-          <input :id="pt" type="radio" name="point" v-model="selected.points" :value="pt" @change="updatePoints">
-          <label :for="pt" class="btn btn-secondary">{{ pt }}</label>
+          <input :id="pt" type="radio" name="point" v-model="selected.points" :value="pt">
+          <label :for="pt" class="btn btn-secondary" @click="updatePoints(pt)">{{ pt }}</label>
         </li>
       </ul>
     </form>
@@ -94,11 +94,11 @@ export default {
       this.submit = true
       localStorage.session = this.$route.params.session
     },
-    updatePoints: function () {
+    updatePoints: function (pt) {
       selectedPoints.child(this.index).update({
         session: this.selected.session,
         name: this.selected.name,
-        points: this.selected.points
+        points: pt
       })
     },
     clearPoints: function () {
