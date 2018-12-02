@@ -76,7 +76,8 @@ export default {
         2,
         4,
         8,
-        16
+        16,
+        '?'
       ],
       selected: {
         session: this.$route.params.session,
@@ -162,7 +163,8 @@ export default {
     },
     winningPoint () {
       let points = this.computePoints()
-      return Math.max.apply(null, points)
+      let filtered = points.filter(el => el !== '?')
+      return Math.max.apply(null, filtered)
     }
   }
 }
@@ -206,5 +208,8 @@ export default {
   }
   table {
     width: 100%;
+  }
+  ul {
+    padding-left: 0;
   }
 </style>
