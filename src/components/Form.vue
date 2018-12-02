@@ -1,6 +1,5 @@
 <template>
   <div class="poker content" v-if="canUserJoinRoom">
-    <h1>Pointing Poker</h1>
     <h2>Room: {{ $route.params.session }}</h2>
     <form>
       <input type="hidden" name="session" v-model="selected.session">
@@ -8,14 +7,14 @@
       <ul>
         <li v-for="pt in pointsAllowed" :key="pt.id">
           <input :id="pt" type="radio" name="point" v-model="selected.points" :value="pt">
-          <label :for="pt" class="btn btn-secondary" @click="updatePoints(pt)">{{ pt }}</label>
+          <label :for="pt" class="btn btn-primary" @click="updatePoints(pt)">{{ pt }}</label>
         </li>
       </ul>
     </form>
     <p class="userPts">Selected Points: {{ selected.points }}</p>
     <div class="actions">
       <hr>
-      <button @click="clearPoints">Clear Points</button>
+      <button class="btn btn-secondary" @click="clearPoints">Clear Points</button>
     </div>
     <div class="results">
       <h3>Players:</h3>
@@ -49,8 +48,8 @@
     <div class="input-group">
       <input type="text" id="name" class="form-control" name="room" v-model="selected.name" placeholder="Enter name">
       <div class="input-group-append">
-        <button class="btn btn-outline-secondary" @click="insertPlayer(false)">Play</button>
-        <button class="btn btn-outline-secondary" @click="insertPlayer(true)">Observe</button>
+        <button class="btn btn-primary" @click="insertPlayer(false)">Play</button>
+        <button class="btn btn-secondary" @click="insertPlayer(true)">Observe</button>
       </div>
     </div>
   </div>
@@ -208,13 +207,13 @@ export default {
   h1, h2, h3, hr, .userPts {
     margin-bottom: 20px;
   }
+  input[type=radio] {
+    display: none;
+  }
   li {
     display: inline-block;
     list-style: none;
     margin-right: 10px;
-  }
-  input[type=radio] {
-    display: none;
   }
   .selected-point {
     background-color: #000;
@@ -222,13 +221,14 @@ export default {
     width: 20%;
   }
   .selected-point.show-points {
-    background-color: #FFF;
+    background-color: #f5f5f5;
   }
   .selected-point.hide-points {
-    background-color: #000;
+    background-color: #236e95;
   }
   .stats {
-    border: 1px solid #000;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     margin: 20px 0 30px;
     padding: 10px 10px 0;
   }
