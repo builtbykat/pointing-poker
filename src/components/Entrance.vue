@@ -1,12 +1,11 @@
 <template>
   <div class="home content">
-    <h1>Pointing Poker</h1>
     <div class="actions">
       <a :href="this.randomRoom" class="btn btn-primary">Create a room</a>
       <div class="input-group">
         <input type="text" id="room" class="form-control" name="room" placeholder="Join a room">
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" @click="joinRoom">Go</button>
+          <button class="btn btn-primary" type="button" @click="joinRoom">Go</button>
         </div>
       </div>
     </div>
