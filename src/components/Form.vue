@@ -13,8 +13,8 @@
       </ul>
     </form>
     <p class="userPts">Selected Points: {{ selected.points }}</p>
-    <hr>
     <div class="actions">
+      <hr>
       <button @click="clearPoints">Clear Points</button>
     </div>
     <div class="results">
@@ -30,19 +30,29 @@
         </tr>
       </table>
       <div class="stats">
+        <h4>Stats</h4>
         <p>
           Max:
           <span id="winner" v-if="allPointsIn">{{ winningPoint }}</span>
         </p>
       </div>
+      <div class="observers" v-if="observers.length > 0">
+        <hr>
+        <h5>Observers:</h5>
+        <ul>
+          <li v-for="observer in observers" :key="observer.name">{{ observer.name }}</li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="name content" v-else>
-    <form>
-      <label>Enter Name:</label>
-      <input v-model="selected.name">
-      <button @click="insertPlayer">Save</button>
-    </form>
+    <div class="input-group">
+      <input type="text" id="name" class="form-control" name="room" v-model="selected.name" placeholder="Enter name">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" @click="insertPlayer(false)">Play</button>
+        <button class="btn btn-outline-secondary" @click="insertPlayer(true)">Observe</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -58,6 +68,7 @@ let config = {
 let app = Firebase.initializeApp(config)
 let db = app.database()
 let selectedPoints = db.ref('poker')
+let observers = []
 let players = []
 export default {
   name: 'app',
@@ -66,7 +77,7 @@ export default {
   },
   data () {
     return {
-      index: localStorage.session + '_' + localStorage.name,
+      index: this.$route.params.session + '_' + localStorage.name,
       hideClass: 'hide-points',
       showClass: 'show-points',
       session: localStorage.session,
@@ -82,7 +93,8 @@ export default {
       selected: {
         session: this.$route.params.session,
         name: localStorage.name,
-        points: ''
+        points: '',
+        observer: false
       }
     }
   },
@@ -90,13 +102,6 @@ export default {
     if (localStorage.name) {
       this.selected.name = localStorage.name
       this.submit = true
-    }
-  },
-  watch: {
-    name (newName) {
-      localStorage.name = newName
-      localStorage.session = this.$route.params.session
-      this.index = localStorage.session + '_' + localStorage.name
     }
   },
   methods: {
@@ -117,14 +122,20 @@ export default {
       })
       return filtered
     },
-    insertPlayer: function () {
+    insertPlayer: function (observer) {
       selectedPoints.child(this.index).set({
         session: this.selected.session,
         name: this.selected.name,
-        points: this.selected.points
+        points: this.selected.points,
+        observer: observer
       })
       this.submit = true
-      localStorage.session = this.$route.params.session
+      this.setLocalStorage()
+    },
+    setLocalStorage: function () {
+      localStorage.setItem('session', String(this.$route.params.session))
+      localStorage.setItem('name', String(document.getElementById('name').value))
+      location.reload()
     },
     updatePoints: function (pt) {
       selectedPoints.child(this.index).update({
@@ -143,15 +154,28 @@ export default {
       }
     },
     canUserJoinRoom () {
-      return this.$route.params.session === localStorage.session && localStorage.name && this.submit
+      if (localStorage.session) {
+        return this.$route.params.session === localStorage.session && localStorage.name && this.submit
+      }
     },
-    name () {
-      return this.selected.name
+    observers () {
+      observers = []
+      for (let item of this.poker) {
+        if (item.session === this.selected.session &&
+            item.observer) {
+          observers.push({
+            name: item.name
+          })
+        }
+      }
+      return observers
     },
     uniqPlayers () {
       players = []
       for (let item of this.poker) {
-        if (item.session === this.selected.session && !item['.key'].includes('undefined')) {
+        if (item.session === this.selected.session &&
+            !item['.key'].includes('undefined') &&
+            !item.observer) {
           players.push({
             key: item['.key'],
             name: item.name,
@@ -164,7 +188,9 @@ export default {
     winningPoint () {
       let points = this.computePoints()
       let filtered = points.filter(el => el !== '?')
-      return Math.max.apply(null, filtered)
+      if (filtered.length > 0) {
+        return Math.max.apply(null, filtered)
+      }
     }
   }
 }
@@ -203,8 +229,8 @@ export default {
   }
   .stats {
     border: 1px solid #000;
-    margin: 20px 0;
-    padding: 10px;
+    margin: 20px 0 30px;
+    padding: 10px 10px 0;
   }
   table {
     width: 100%;
