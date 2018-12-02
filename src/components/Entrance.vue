@@ -1,7 +1,7 @@
 <template>
   <div class="home content">
     <h1>Pointing Poker</h1>
-    <div>
+    <div class="actions">
       <a :href="this.randomRoom" class="btn btn-primary">Create a room</a>
       <div class="input-group">
         <input type="text" id="room" class="form-control" name="room" placeholder="Join a room">
@@ -9,6 +9,18 @@
           <button class="btn btn-outline-secondary" type="button" @click="joinRoom">Go</button>
         </div>
       </div>
+    </div>
+    <div class="about content">
+      <p>Simply create a room or join an existing one.</p>
+      <p>Designed on Vue.js + Firebase database.</p>
+      <p>Features:</p>
+      <ul>
+        <li>Supports multiple sessions</li>
+        <li>Supports players and observers</li>
+        <!--
+        click to copy session link
+        -->
+      </ul>
     </div>
   </div>
 </template>
