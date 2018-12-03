@@ -40,7 +40,7 @@ export default {
   }
   .btn-half {
     margin-top: 5px;
-    width: 47%;
+    width: 47.3%;
   }
   .btn-primary,
   .btn-primary:not(:disabled):not(.disabled):active,
