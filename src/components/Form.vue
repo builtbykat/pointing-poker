@@ -18,15 +18,17 @@
     </div>
     <div class="results">
       <h3>Players:</h3>
-      <table>
-        <tr v-for="player in uniqPlayers" :key="player['.key']">
-          <td>
-            {{ player.name }}
-          </td>
-          <td class="selected-point" :class="[allPointsIn ? showClass : hideClass]">
-            {{ player.points }}
-          </td>
-        </tr>
+      <table class="table table-striped">
+        <tbody>
+          <tr v-for="player in uniqPlayers" :key="player['.key']">
+            <td>
+              {{ player.name }}
+            </td>
+            <td class="selected-point" :class="[allPointsIn ? showClass : hideClass]">
+              {{ player.points }}
+            </td>
+          </tr>
+        </tbody>
       </table>
       <div class="stats">
         <h4>Stats</h4>

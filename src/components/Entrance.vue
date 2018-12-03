@@ -1,7 +1,7 @@
 <template>
   <div class="home content">
     <div class="actions">
-      <a :href="this.randomRoom" class="btn btn-primary">Create a room</a>
+      <a :href="this.randomRoom" class="create btn btn-primary">Create a room</a>
       <div class="input-group">
         <input type="text" id="room" class="form-control" name="room" placeholder="Join a room">
         <div class="input-group-append">
@@ -55,6 +55,9 @@ export default {
   .content {
     padding: 20px;
     max-width: 320px;
+  }
+  .create {
+    width: 100%;
   }
   input[type=text] {
     border-top-left-radius: 5px;
