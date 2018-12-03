@@ -9,7 +9,7 @@
         </div>
       </div>
     </div>
-    <div class="about content">
+    <div class="about">
       <p>Simply create a room or join an existing one.</p>
       <p>Designed on Vue.js + Firebase database.</p>
       <p>Features:</p>
