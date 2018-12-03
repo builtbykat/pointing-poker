@@ -1,5 +1,6 @@
 <template>
   <div class="home content">
+    <p class="lead">Simply create a room or join an existing one.</p>
     <div class="actions">
       <a :href="this.randomRoom" class="create btn btn-primary">Create a room</a>
       <div class="input-group">
@@ -10,9 +11,6 @@
       </div>
     </div>
     <div class="about">
-      <p>Simply create a room or join an existing one.</p>
-      <p>Designed on Vue.js + Firebase database.</p>
-      <p>Features:</p>
       <ul>
         <li>Supports multiple sessions</li>
         <li>Supports players and observers</li>
@@ -20,6 +18,7 @@
         click to copy session link
         -->
       </ul>
+      <small class="text-muted">Designed with Vue + Firebase</small>
     </div>
   </div>
 </template>
@@ -49,6 +48,9 @@ export default {
 </script>
 
 <style scoped>
+  .actions {
+    margin: 40px 0px;
+  }
   .btn-primary {
     margin-bottom: 20px;
   }
@@ -63,7 +65,13 @@ export default {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
   }
+  .input-group .btn-primary {
+    margin-bottom: 0;
+  }
   h1 {
     margin-bottom: 20px;
+  }
+  li {
+    margin-left: -20px;
   }
 </style>
