@@ -47,12 +47,10 @@
     </div>
   </div>
   <div class="name content" v-else>
-    <div class="input-group">
       <input type="text" id="name" class="form-control" name="room" v-model="selected.name" placeholder="Enter name">
-      <div class="input-group-append">
-        <button class="btn btn-primary" @click="insertPlayer(false)">Play</button>
-        <button class="btn btn-secondary" @click="insertPlayer(true)">Observe</button>
-      </div>
+    <div class="btns">
+      <button class="btn btn-primary btn-half" @click="insertPlayer(false)">Play</button>
+      <button class="btn btn-secondary btn-half" @click="insertPlayer(true)">Observe</button>
     </div>
   </div>
 </template>
@@ -124,6 +122,8 @@ export default {
       return filtered
     },
     insertPlayer: function (observer) {
+      this.setLocalStorage()
+      this.index = localStorage.session + '_' + localStorage.name
       selectedPoints.child(this.index).set({
         session: this.selected.session,
         name: this.selected.name,
@@ -131,7 +131,6 @@ export default {
         observer: observer
       })
       this.submit = true
-      this.setLocalStorage()
     },
     setLocalStorage: function () {
       localStorage.setItem('session', String(this.$route.params.session))
@@ -218,8 +217,8 @@ export default {
     margin-right: 10px;
   }
   .selected-point {
-    background-color: #000;
-    color: #000;
+    background-color: #236e95;
+    color: #236e95;
     width: 20%;
   }
   .selected-point.show-points {

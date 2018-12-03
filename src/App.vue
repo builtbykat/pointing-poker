@@ -32,11 +32,25 @@ export default {
     color: #f5f5f5;
     font-family: 'Montserrat', sans-serif;
   }
-  .btn-primary, .btn-primary:hover {
+  .btns .btn-half:first-of-type {
+    margin-right: 5px;
+  }
+  .btns .btn-half:last-of-type {
+    margin-left: 5px;
+  }
+  .btn-half {
+    margin-top: 5px;
+    width: 47%;
+  }
+  .btn-primary,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .btn-primary:hover {
     background-color: #1d5171;
     border-color: #1d5171;
   }
-  .btn-secondary, .btn-secondary:hover {
+  .btn-secondary,
+  .btn-secondary:not(:disabled):not(.disabled):active,
+  .btn-secondary:hover {
     background-color: #236e95;
     border-color: #236e95;
   }
