@@ -1,5 +1,7 @@
 # Pointing Poker
 
+Vue seems to have changed a lot since 2018, find a rework on branch `main`
+
 ## Project setup
 ```
 npm install
