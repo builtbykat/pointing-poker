@@ -1,4 +1,4 @@
-# vapp
+# Pointing Poker
 
 ## Project setup
 ```
