@@ -56,12 +56,8 @@
 </template>
 
 <script>
-import * as Firebase from 'firebase';
-let config = {
-  // @TODO .env
-}
-let app = Firebase.initializeApp(config)
-let db = app.database()
+import FirebaseApp from '../services/Firebase'
+const db = FirebaseApp.database()
 let selectedPoints = db.ref('poker')
 let pokerObservers = []
 let pokerPlayers = []
